@@ -27,14 +27,19 @@ class OpenAIProvider:
 
     def generate(self, req: AIRequest, *, model: str) -> str:
         # Using Responses API style. If your org uses a different endpoint, swap here.
-        resp = self.client.responses.create(
-            model=model,
-            temperature=req.temperature,
-            input=[
-                {"role": "system", "content": req.system},
-                {"role": "user", "content": req.user},
-            ],
-            max_output_tokens=req.max_output_tokens,
+        kwargs = {}
+if req.max_output_tokens is not None:
+    kwargs["max_output_tokens"] = req.max_output_tokens
+
+resp = self.client.responses.create(
+    model=model,
+    temperature=req.temperature,
+    input=[
+        {"role": "system", "content": req.system},
+        {"role": "user", "content": req.user},
+    ],
+    **kwargs,
+)
         )
         # The SDK returns structured output; .output_text is the convenience accessor.
         return resp.output_text
