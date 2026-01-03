@@ -1,0 +1,24 @@
+# PowerDash Enablement Suite configuration
+app:
+  suite_name: "PowerDash Enablement"
+  org_name: "PowerDash HR"
+  storage_dir: ".data"
+
+ai:
+  default_provider: "mock"   # mock | openai
+  default_model: "gpt-5.2"   # future-proofed; provider may map/override
+  models:
+    - id: "gpt-5.2"
+      label: "ChatGPT 5.2 (default)"
+      provider: "openai"
+    - id: "gpt-4o"
+      label: "GPT-4o"
+      provider: "openai"
+    - id: "mock"
+      label: "Mock (offline)"
+      provider: "mock"
+
+  defaults:
+    temperature: 0.2
+    response_length: "medium"   # short | medium | long
+    tone: "practical"           # practical | coaching | analytical
