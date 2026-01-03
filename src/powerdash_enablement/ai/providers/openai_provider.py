@@ -9,12 +9,11 @@ from .base import AIProvider, AIRequest
 
 
 class OpenAIProvider:
-    """OpenAI provider wrapper.
+    """
+    OpenAI provider wrapper.
 
-    Notes:
-    - Uses the new OpenAI Python SDK.
-    - Model IDs are configurable; you can map your catalog in config/config.yaml.
-    - This is intentionally thin to keep a clean separation between UI and AI logic.
+    Uses the OpenAI Responses API.
+    Keeps provider logic thin and production-safe.
     """
 
     name = "openai"
@@ -26,20 +25,19 @@ class OpenAIProvider:
         self.client = OpenAI(api_key=api_key)
 
     def generate(self, req: AIRequest, *, model: str) -> str:
-        # Using Responses API style. If your org uses a different endpoint, swap here.
         kwargs = {}
-if req.max_output_tokens is not None:
-    kwargs["max_output_tokens"] = req.max_output_tokens
 
-resp = self.client.responses.create(
-    model=model,
-    temperature=req.temperature,
-    input=[
-        {"role": "system", "content": req.system},
-        {"role": "user", "content": req.user},
-    ],
-    **kwargs,
-)
+        if req.max_output_tokens is not None:
+            kwargs["max_output_tokens"] = req.max_output_tokens
+
+        resp = self.client.responses.create(
+            model=model,
+            temperature=req.temperature,
+            input=[
+                {"role": "system", "content": req.system},
+                {"role": "user", "content": req.user},
+            ],
+            **kwargs,
         )
-        # The SDK returns structured output; .output_text is the convenience accessor.
+
         return resp.output_text
